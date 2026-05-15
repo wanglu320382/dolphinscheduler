@@ -39,6 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -264,17 +265,29 @@ public abstract class AbstractCommandExecutor {
      * @return process id
      */
     private int getProcessId(Process process) {
-        int processId = 0;
+        // JDK 9+ 标准 API；JDK 8 及旧实现类上的 pid 字段在部分平台已移除，反射会失败
+        try {
+            Method pidMethod = Process.class.getMethod("pid");
+            long pid = (long) pidMethod.invoke(process);
+            if (pid > Integer.MAX_VALUE) {
+                log.warn("Process pid exceeds int range: {}", pid);
+                return 0;
+            }
+            return (int) pid;
+        } catch (NoSuchMethodException ignored) {
+            // JDK 8 无 Process.pid()
+        } catch (Exception e) {
+            log.debug("Invoke Process.pid() failed: {}", e.getMessage());
+        }
 
+        int processId = 0;
         try {
             Field f = process.getClass().getDeclaredField(TaskConstants.PID);
             f.setAccessible(true);
-
             processId = f.getInt(process);
         } catch (Exception e) {
             log.error("Get task pid failed", e);
         }
-
         return processId;
     }
 

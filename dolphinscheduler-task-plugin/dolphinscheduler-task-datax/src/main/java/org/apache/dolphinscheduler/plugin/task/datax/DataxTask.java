@@ -21,9 +21,12 @@ import static org.apache.dolphinscheduler.plugin.datasource.api.utils.PasswordUt
 import static org.apache.dolphinscheduler.plugin.task.api.TaskConstants.EXIT_CODE_FAILURE;
 
 import org.apache.dolphinscheduler.common.utils.JSONUtils;
+import org.apache.dolphinscheduler.common.utils.PropertyUtils;
 import org.apache.dolphinscheduler.plugin.datasource.api.plugin.DataSourceClientProvider;
 import org.apache.dolphinscheduler.plugin.datasource.api.utils.DataSourceUtils;
 import org.apache.dolphinscheduler.plugin.task.api.AbstractTask;
+import org.apache.dolphinscheduler.plugin.task.api.enums.DataType;
+import org.apache.dolphinscheduler.plugin.task.api.enums.Direct;
 import org.apache.dolphinscheduler.plugin.task.api.ShellCommandExecutor;
 import org.apache.dolphinscheduler.plugin.task.api.TaskCallBack;
 import org.apache.dolphinscheduler.plugin.task.api.TaskException;
@@ -53,6 +56,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -98,6 +102,11 @@ public class DataxTask extends AbstractTask {
     private static final String DATAX_LAUNCHER = "${DATAX_LAUNCHER}";
     private static final int DATAX_CHANNEL_COUNT = 1;
 
+    /** common.properties：本地 DataX 入口，可被环境变量 DATAX_LAUNCHER 覆盖 */
+    private static final String CFG_DATAX_LAUNCHER_DEFAULT = "datax.launcher.default";
+    /** common.properties：python 可执行文件，可被 PYTHON_LAUNCHER 覆盖 */
+    private static final String CFG_PYTHON_LAUNCHER_DEFAULT = "python.launcher.default";
+
     private DataxParameters dataXParameters;
 
     private final ShellCommandExecutor shellCommandExecutor;
@@ -131,7 +140,11 @@ public class DataxTask extends AbstractTask {
     public void handle(TaskCallBack taskCallBack) throws TaskException {
         try {
             // replace placeholder,and combine local and global parameters
-            Map<String, Property> paramsMap = taskRequest.getPrepareParamsMap();
+            Map<String, Property> paramsMap = new HashMap<>();
+            if (taskRequest.getPrepareParamsMap() != null) {
+                paramsMap.putAll(taskRequest.getPrepareParamsMap());
+            }
+            applyDefaultDataxEnvParams(paramsMap);
 
             IShellInterceptorBuilder<?, ?> shellActuatorBuilder = ShellInterceptorBuilderFactory.newBuilder()
                     .properties(ParameterUtils.convert(paramsMap))
@@ -533,6 +546,39 @@ public class DataxTask extends AbstractTask {
         if (obj == null) {
             throw new RuntimeException(message);
         }
+    }
+
+    /**
+     * 为命令中的 ${DATAX_LAUNCHER}、${PYTHON_LAUNCHER} 注入默认值（环境变量优先，其次 common.properties）。
+     */
+    private void applyDefaultDataxEnvParams(Map<String, Property> paramsMap) {
+        String dataxPath = System.getenv("DATAX_LAUNCHER");
+        if (StringUtils.isBlank(dataxPath)) {
+            dataxPath = PropertyUtils.getString(CFG_DATAX_LAUNCHER_DEFAULT);
+        }
+        putLauncherIfMissing(paramsMap, "DATAX_LAUNCHER", dataxPath);
+
+        String pythonPath = System.getenv("PYTHON_LAUNCHER");
+        if (StringUtils.isBlank(pythonPath)) {
+            pythonPath = PropertyUtils.getString(CFG_PYTHON_LAUNCHER_DEFAULT);
+        }
+        if (StringUtils.isBlank(pythonPath)) {
+            pythonPath = "python";
+        }
+        putLauncherIfMissing(paramsMap, "PYTHON_LAUNCHER", pythonPath);
+    }
+
+    private void putLauncherIfMissing(Map<String, Property> paramsMap, String name, String value) {
+        if (StringUtils.isBlank(value)) {
+            return;
+        }
+        if (paramsMap.containsKey(name)) {
+            Property existing = paramsMap.get(name);
+            if (existing != null && StringUtils.isNotBlank(existing.getValue())) {
+                return;
+            }
+        }
+        paramsMap.put(name, new Property(name, Direct.IN, DataType.VARCHAR, value));
     }
 
 }

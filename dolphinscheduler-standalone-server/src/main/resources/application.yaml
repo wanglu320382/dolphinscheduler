@@ -222,6 +222,7 @@ master:
 
 # 租户是否按 OS 用户校验：由 common.properties 的 sudo.enable 决定（PropertyUtils：环境变量 SUDO_ENABLE > -Dsudo.enable > 文件）。
 # TenantUtils 使用 OSUtils.isSudoEnable()，仅认 common.properties 的 sudo.enable（及 SUDO_ENABLE / -Dsudo.enable）；勿使用 -Ddolphinscheduler.worker.sudo-enable。
+# DataX 默认入口 datax.py：不在此 YAML 配置；请改 dolphinscheduler-common 的 common.properties 中 datax.launcher.default，或在 DS「安全中心-环境管理」里 export DATAX_LAUNCHER=...（优先级更高）。
 worker:
   # worker listener port
   host: 127.0.0.1

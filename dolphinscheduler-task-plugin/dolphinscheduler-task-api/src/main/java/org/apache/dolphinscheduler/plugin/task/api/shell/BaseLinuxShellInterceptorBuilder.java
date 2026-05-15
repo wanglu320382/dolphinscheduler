@@ -56,8 +56,8 @@ public abstract class BaseLinuxShellInterceptorBuilder<T extends BaseLinuxShellI
         finalScripts.addAll(k8sConfig());
         // add shell body
         finalScripts.add(shellBody());
-        // create shell file
-        String finalScript = finalScripts.stream().collect(Collectors.joining(System.lineSeparator()));
+        // 生成 .sh 必须统一为 LF；在 Windows 上 System.lineSeparator() 为 CRLF，会导致 bash/Git Bash 出现 cd 路径带 \r 等错误
+        String finalScript = finalScripts.stream().collect(Collectors.joining("\n"));
         Path shellAbsolutePath = shellAbsolutePath();
         FileUtils.createFileWith755(shellAbsolutePath);
         Files.write(shellAbsolutePath, finalScript.getBytes(), StandardOpenOption.APPEND);
@@ -109,10 +109,8 @@ public abstract class BaseLinuxShellInterceptorBuilder<T extends BaseLinuxShellI
         if (CollectionUtils.isEmpty(scripts)) {
             return StringUtils.EMPTY;
         }
-        String scriptBody = scripts
-                .stream()
-                .collect(Collectors.joining(System.lineSeparator()));
-        scriptBody = scriptBody.replaceAll("\\r\\n", System.lineSeparator());
+        String scriptBody = scripts.stream().collect(Collectors.joining("\n"));
+        scriptBody = scriptBody.replaceAll("\\r\\n?", "\n");
         return ParameterUtils.convertParameterPlaceholders(scriptBody, propertyMap);
     }
 
