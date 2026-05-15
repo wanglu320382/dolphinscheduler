@@ -220,6 +220,8 @@ master:
       # master fetch command num
       fetch-size: 10
 
+# 租户是否按 OS 用户校验：由 common.properties 的 sudo.enable 决定（PropertyUtils：环境变量 SUDO_ENABLE > -Dsudo.enable > 文件）。
+# TenantUtils 使用 OSUtils.isSudoEnable()，仅认 common.properties 的 sudo.enable（及 SUDO_ENABLE / -Dsudo.enable）；勿使用 -Ddolphinscheduler.worker.sudo-enable。
 worker:
   # worker listener port
   host: 127.0.0.1
@@ -243,13 +245,12 @@ worker:
   physical-task-config:
     # The number of threads in the Physical task engine that used to execute tasks
     task-executor-thread-size: 100
-  sudo-enable: false  # 👈 必须加这一行！关闭sudo
   tenant-config:
     # tenant corresponds to the user of the system, which is used by the worker to submit the job. If system does not have this user, it will be automatically created after the parameter worker.tenant.auto.create is true.
     auto-create-tenant-enabled: false
-    # If set true, will use worker bootstrap user as the tenant to execute task when the tenant is `default`;
+    # 当 sudo.enable=true 且工作流租户为 default 时必须为 true；sudo.enable=false 时由 bootstrap 用户执行，此项影响较小
     default-tenant-enabled: true
-    enable: false       # 👈 加这一行！彻底关闭租户！
+    enable: false
 
 alert:
   port: 50052

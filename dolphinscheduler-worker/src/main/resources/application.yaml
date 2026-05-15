@@ -42,8 +42,7 @@ registry:
     digest: ~
 
 worker:
-  # 关闭 sudo 执行（关键！）
-  sudo-enable: false
+  # 租户/OS 用户隔离由 classpath common.properties 的 sudo.enable 控制（见 dolphinscheduler-common）；此处 sudo-enable 不参与 TenantUtils。
   # worker listener port
   listen-port: 1234
   # worker heartbeat interval
