@@ -19,7 +19,7 @@ spring:
   application:
     name: standalone-server
   profiles:
-    active: h2
+    active: mysql
   jackson:
     time-zone: UTC
     date-format: "yyyy-MM-dd HH:mm:ss"
@@ -28,12 +28,12 @@ spring:
     location: classpath:standalone-banner.txt
   sql:
     init:
-      schema-locations: classpath:sql/dolphinscheduler_h2.sql
+      schema-locations: classpath:sql/dolphinscheduler_mysql.sql
   datasource:
-      driver-class-name: org.h2.Driver
-      url: jdbc:h2:mem:dolphinscheduler;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=true
-      username: sa
-      password: ""
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://127.0.0.1:3306/dolphinscheduler?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&characterEncoding=utf8
+      username: root
+      password: linkage@12345
       hikari:
         connection-test-query: select 1
         pool-name: DolphinSchedulerDataSource
@@ -222,6 +222,7 @@ master:
 
 worker:
   # worker listener port
+  host: 127.0.0.1
   listen-port: 1234
   # worker heartbeat interval
   max-heartbeat-interval: 10s
@@ -242,11 +243,13 @@ worker:
   physical-task-config:
     # The number of threads in the Physical task engine that used to execute tasks
     task-executor-thread-size: 100
+  sudo-enable: false  # 👈 必须加这一行！关闭sudo
   tenant-config:
     # tenant corresponds to the user of the system, which is used by the worker to submit the job. If system does not have this user, it will be automatically created after the parameter worker.tenant.auto.create is true.
-    auto-create-tenant-enabled: true
+    auto-create-tenant-enabled: false
     # If set true, will use worker bootstrap user as the tenant to execute task when the tenant is `default`;
     default-tenant-enabled: true
+    enable: false       # 👈 加这一行！彻底关闭租户！
 
 alert:
   port: 50052
@@ -341,10 +344,10 @@ spring:
     properties:
       org.quartz.jobStore.driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://127.0.0.1:5432/dolphinscheduler
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/dolphinscheduler
     username: root
-    password: root
+    password: linkage@12345
 
 ---
 spring:
@@ -358,4 +361,4 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://127.0.0.1:3306/dolphinscheduler?useUnicode=true&characterEncoding=UTF-8
     username: root
-    password: root@123
+    password: linkage@12345

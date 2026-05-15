@@ -42,6 +42,8 @@ registry:
     digest: ~
 
 worker:
+  # 关闭 sudo 执行（关键！）
+  sudo-enable: false
   # worker listener port
   listen-port: 1234
   # worker heartbeat interval
@@ -66,7 +68,7 @@ worker:
     task-executor-thread-size: 100
   tenant-config:
     # tenant corresponds to the user of the system, which is used by the worker to submit the job. If system does not have this user, it will be automatically created after the parameter worker.tenant.auto.create is true.
-    auto-create-tenant-enabled: true
+    auto-create-tenant-enabled: false
     # If set true, will use worker bootstrap user as the tenant to execute task when the tenant is `default`.
     default-tenant-enabled: false
 
