@@ -58,6 +58,8 @@ public interface ProcessService {
 
     DataSource findDataSourceById(int id);
 
+    DataSource findDataSourceByName(String name);
+
     <T> List<T> listUnauthorized(int userId, T[] needChecks, AuthorizationType authorizationType);
 
     User getUserById(int userId);

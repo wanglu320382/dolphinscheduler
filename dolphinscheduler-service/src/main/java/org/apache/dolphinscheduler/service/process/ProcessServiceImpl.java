@@ -318,6 +318,21 @@ public class ProcessServiceImpl implements ProcessService {
         return dataSourceMapper.selectById(id);
     }
 
+    @Override
+    public DataSource findDataSourceByName(String name) {
+        if (org.apache.commons.lang3.StringUtils.isBlank(name)) {
+            return null;
+        }
+        List<DataSource> list = dataSourceMapper.queryDataSourceByName(name.trim());
+        if (list == null || list.isEmpty()) {
+            return null;
+        }
+        if (list.size() > 1) {
+            log.warn("数据源名称 {} 存在 {} 条记录，使用 id={} 的记录", name, list.size(), list.get(0).getId());
+        }
+        return list.get(0);
+    }
+
     /**
      * get user by user id
      *

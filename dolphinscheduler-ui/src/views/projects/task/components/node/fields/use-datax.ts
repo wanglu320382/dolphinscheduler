@@ -206,9 +206,9 @@ export function useDataX(model: { [field: string]: any }): IJsonItem[] {
           ) {
             return new Error(t('project.node.sql_empty_tips'))
           }
-          if (!utils.isJson(model.json)) {
-            return new Error(t('project.node.json_format_tips'))
-          }
+          // if (!utils.isJson(model.json)) {
+          //   return new Error(t('project.node.json_format_tips'))
+          // }
         }
       }
     },

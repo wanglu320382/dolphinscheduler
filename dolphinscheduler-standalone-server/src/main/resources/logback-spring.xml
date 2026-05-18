@@ -18,7 +18,7 @@
 
 <configuration scan="true" scanPeriod="120 seconds">
     <!-- 绝对路径，避免依赖进程工作目录；Windows 下可用正斜杠 -->
-    <property name="log.base" value="F:/MCP/ds/dolphinscheduler/dslog"/>
+    <property name="log.base" value="F:/MCP/ds/dslog"/>
     <property scope="context" name="log.base.ctx" value="${log.base}" />
 
     <conversionRule conversionWord="message"

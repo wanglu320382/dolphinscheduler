@@ -35,4 +35,9 @@ public class DataSourceParameters extends AbstractResourceParameters {
 
     private String connectionParams;
 
+    /**
+     * t_ds_datasource.name，用于按名称解析数据源
+     */
+    private String name;
+
 }

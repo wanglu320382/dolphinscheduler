@@ -46,6 +46,7 @@ task:
   dataIntegration:
     - 'SEATUNNEL'
     - 'DATAX'
+    - 'DATAXML'
     - 'SQOOP'
   machineLearning:
     - 'JUPYTER'

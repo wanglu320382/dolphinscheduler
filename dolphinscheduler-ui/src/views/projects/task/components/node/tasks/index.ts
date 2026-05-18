@@ -31,6 +31,7 @@ import { useSeaTunnel } from './use-sea-tunnel'
 import { useSwitch } from './use-switch'
 import { useConditions } from './use-conditions'
 import { useDataX } from './use-datax'
+import { useDataXml } from './use-dataxml'
 import { useDependent } from './use-dependent'
 import { useEmr } from './use-emr'
 import { useEmrServerless } from './use-emr-serverless'
@@ -69,6 +70,7 @@ export default {
   SWITCH: useSwitch,
   CONDITIONS: useConditions,
   DATAX: useDataX,
+  DATAXML: useDataXml,
   DEPENDENT: useDependent,
   EMR: useEmr,
   EMR_SERVERLESS: useEmrServerless,

@@ -33,6 +33,7 @@ type TaskType =
   | 'GRPC'
   | 'HTTP'
   | 'DATAX'
+  | 'DATAXML'
   | 'SQOOP'
   | 'CONDITIONS'
   | 'SWITCH'

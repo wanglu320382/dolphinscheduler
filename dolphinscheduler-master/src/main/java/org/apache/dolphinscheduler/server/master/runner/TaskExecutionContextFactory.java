@@ -122,20 +122,35 @@ public class TaskExecutionContextFactory {
         return resourceParameters;
     }
 
+    private DataSource resolveDataSource(Integer code, AbstractResourceParameters parameters) {
+        if (parameters instanceof DataSourceParameters) {
+            DataSourceParameters dataSourceParameters = (DataSourceParameters) parameters;
+            if (StringUtils.isNotEmpty(dataSourceParameters.getName())
+                    && StringUtils.isEmpty(dataSourceParameters.getConnectionParams())) {
+                return processService.findDataSourceByName(dataSourceParameters.getName());
+            }
+        }
+        return processService.findDataSourceById(code);
+    }
+
     private void assembleDataSourceParameters(Map<Integer, AbstractResourceParameters> map) {
         if (MapUtils.isEmpty(map)) {
             return;
         }
 
         map.forEach((code, parameters) -> {
-            DataSource datasource = processService.findDataSourceById(code);
+            DataSource datasource = resolveDataSource(code, parameters);
             if (Objects.isNull(datasource)) {
                 return;
             }
             DataSourceParameters dataSourceParameters = new DataSourceParameters();
             dataSourceParameters.setType(datasource.getType());
             dataSourceParameters.setConnectionParams(datasource.getConnectionParams());
-            map.put(code, dataSourceParameters);
+            dataSourceParameters.setName(datasource.getName());
+            map.put(datasource.getId(), dataSourceParameters);
+            if (!Objects.equals(code, datasource.getId())) {
+                map.remove(code);
+            }
         });
     }
 

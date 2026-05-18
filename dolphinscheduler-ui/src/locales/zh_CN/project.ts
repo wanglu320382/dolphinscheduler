@@ -620,6 +620,8 @@ export default {
     switch_branch_flow_tips: '请选择分支流转',
     and: '且',
     or: '或',
+    dataxml_content: 'XData XML 配置',
+    dataxml_content_tips: '请输入 XData XML 配置内容',
     datax_custom_template: '自定义模板',
     datax_json_template: 'JSON',
     datax_target_datasource_type: '目标源类型',

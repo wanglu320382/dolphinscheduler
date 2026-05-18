@@ -27,6 +27,7 @@ export type TaskType =
   | 'GRPC'
   | 'HTTP'
   | 'DATAX'
+  | 'DATAXML'
   | 'SQOOP'
   | 'CONDITIONS'
   | 'SWITCH'
@@ -96,6 +97,9 @@ export const TASK_TYPES_MAP = {
   },
   DATAX: {
     alias: 'DataX'
+  },
+  DATAXML: {
+    alias: 'DataXML'
   },
   SQOOP: {
     alias: 'SQOOP',

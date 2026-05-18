@@ -639,6 +639,8 @@ export default {
     switch_branch_flow_tips: 'Please select branch flow',
     and: 'and',
     or: 'or',
+    dataxml_content: 'XData XML Configuration',
+    dataxml_content_tips: 'Please enter XData XML configuration',
     datax_custom_template: 'Custom Template',
     datax_json_template: 'JSON',
     datax_target_datasource_type: 'Target Datasource Types',
