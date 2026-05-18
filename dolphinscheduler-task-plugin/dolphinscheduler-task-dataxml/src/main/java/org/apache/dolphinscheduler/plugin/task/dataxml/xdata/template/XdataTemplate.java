@@ -19,9 +19,9 @@ import java.util.List;
 })
 public class XdataTemplate {
 
-    @XmlElement(required = false, name = "column", namespace = "http://www.gzsw.com/xdata-templates/")
+    @XmlElement(required = false, name = "column", namespace = "http://www.dxml.com/xdata-templates/")
     protected List<Column> column;
-    @XmlElement(required = false, name = "updateCond", namespace = "http://www.gzsw.com/xdata-templates/")
+    @XmlElement(required = false, name = "updateCond", namespace = "http://www.dxml.com/xdata-templates/")
     protected List<Column> updateCond;
     @XmlAttribute(name = "snatchType")
     protected SnatchType snatchType;

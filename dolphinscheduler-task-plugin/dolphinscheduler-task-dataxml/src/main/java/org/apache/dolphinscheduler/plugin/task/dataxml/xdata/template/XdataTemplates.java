@@ -23,7 +23,7 @@ import java.util.List;
 @XmlRootElement(name = "xdataTemplates", namespace = "")
 public class XdataTemplates {
 
-    @XmlElement(name = "xdata-template", namespace = "http://www.gzsw.com/xdata-templates/")
+    @XmlElement(name = "xdata-template", namespace = "http://www.dxml.com/xdata-templates/")
     protected List<XdataTemplate> xdataTemplate;
 
     /**
