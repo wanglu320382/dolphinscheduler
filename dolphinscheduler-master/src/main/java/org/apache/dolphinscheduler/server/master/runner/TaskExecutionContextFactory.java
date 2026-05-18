@@ -51,6 +51,7 @@ import org.apache.dolphinscheduler.service.process.ProcessService;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -138,10 +139,14 @@ public class TaskExecutionContextFactory {
             return;
         }
 
-        map.forEach((code, parameters) -> {
+        // 使用条目快照迭代，避免在遍历时 put/remove 触发 ConcurrentModificationException（DATAXML 按 name.hashCode 注册 key）
+        List<Map.Entry<Integer, AbstractResourceParameters>> entries = new ArrayList<>(map.entrySet());
+        for (Map.Entry<Integer, AbstractResourceParameters> entry : entries) {
+            Integer code = entry.getKey();
+            AbstractResourceParameters parameters = entry.getValue();
             DataSource datasource = resolveDataSource(code, parameters);
             if (Objects.isNull(datasource)) {
-                return;
+                continue;
             }
             DataSourceParameters dataSourceParameters = new DataSourceParameters();
             dataSourceParameters.setType(datasource.getType());
@@ -151,7 +156,7 @@ public class TaskExecutionContextFactory {
             if (!Objects.equals(code, datasource.getId())) {
                 map.remove(code);
             }
-        });
+        }
     }
 
     private K8sTaskExecutionContext getK8sTaskExecutionContext(final TaskInstance taskInstance) {
